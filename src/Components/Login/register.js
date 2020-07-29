@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Pane, TextInput, Button, Menu, Text, Heading, Theme } from 'evergreen-ui';
+import { Pane, TextInput, Button, Menu, Text, Heading, Theme, toaster } from 'evergreen-ui';
 import { useAuth } from '../Context/auth';
 import axios from 'axios';
 import './login.css';
 import { Redirect } from 'react-router-dom';
 
 export default function Login() {
-    const [message, setMessage] = useState("");
     const [userName, setUsername] = useState("");
     const [fullName, setFullname] = useState("");
     const [passWord, setPassword] = useState("");
@@ -14,31 +13,31 @@ export default function Login() {
 
 
     const [loggedIn, setLoggedIn] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [loginFailure, setLoginFailure] = useState(false);
     const { setAuthTokens } = useAuth();
     const { authTokens } = useAuth();
     
     function registerUser() {
-        axios.post('http://localhost:4000/api/register', { // https://stackoverflow.com/questions/53083751/how-to-use-the-same-port-for-react-js-and-node-js/53084586
-            fullname: userName,
-            email: passWord,
+        axios.post('/api/register', { // https://stackoverflow.com/questions/53083751/how-to-use-the-same-port-for-react-js-and-node-js/53084586
+            fullname: fullName,
+            email: userName,
             password: passWord,
             invite_key: api_key,
         }).then(response => {
-            if (response.status === 200) {
-                setAuthTokens(response.data);
+            if (response.status == 201) {
+                setAuthTokens("jackie");
                 setLoggedIn(true);
+                window.location.reload(false);
+            }
+        }).catch(exception => {
+            if (exception.response.status == 401 || exception.response.status == 409) {
+                setLoggedIn(false);
+                toaster.danger("There is already an account associated with your email, or the invite key has expired.");
             }
             else {
                 setLoggedIn(false);
-                loginFailure(true);
-                setMessage("Sorry, your username or password does not match.");
+                console.log(exception);
+                toaster.danger("Sorry, there is a problem logging in on our end. We will fix it soon.");
             }
-            
-        }).catch(exception => {
-            setIsError(true);
-            setMessage("Sorry, there is a problem logging in on our end. We will fix it soon.");
         });
     }
 
@@ -97,7 +96,6 @@ export default function Login() {
                     width={270}
                 />
                 <Button appearance="primary" marginTop={16} onClick={registerUser}>Sign in</Button>
-                <Text>{message}</Text>
             </Pane>
         </div>
     );

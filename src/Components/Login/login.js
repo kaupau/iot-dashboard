@@ -14,7 +14,7 @@ export default function Login() {
     const { authTokens } = useAuth();
     
     function loginUser() {
-        axios.post('http://localhost:4000/api/login', { // https://stackoverflow.com/questions/53083751/how-to-use-the-same-port-for-react-js-and-node-js/53084586
+        axios.post('/api/login', { // https://stackoverflow.com/questions/53083751/how-to-use-the-same-port-for-react-js-and-node-js/53084586
             email: userName,
             password: passWord,
         }).then(response => {

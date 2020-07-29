@@ -42,7 +42,8 @@ var register = (req, res) => {
         }
         else if(rows.length>=1) {
             // return message saying that user exists.
-            console.log("record already exists.");
+            console.log(rows);
+            console.log("created 2");
             return res.status(409).json({ message: 'Either the email you have entered is already in use, or this invite key has already been used.' });
         }
         else {
@@ -52,8 +53,8 @@ var register = (req, res) => {
                                             .digest("base64");
             password = salt + '$' + hash;
 
-            var sql = ` INSERT INTO users (fullname, email, password)
-                        VALUES ('${req.body.fullname}', '${req.body.email}', '${password})'
+            var sql = ` UPDATE users 
+                        set fullname='${req.body.fullname}', email='${req.body.email}', password='${password}'
                         WHERE invite_key = '${req.body.invite_key}'`
             db.all(sql, [], (err, rows) => {
                 if (err) {
@@ -63,6 +64,7 @@ var register = (req, res) => {
                 }
                 else {
                     // return message saying that user exists.
+                    console.log("created");
                     return res.status(201).json({ message: 'Created User' });
                 }
             });
@@ -75,6 +77,7 @@ var login = (req, res) => {
                 FROM users
                 WHERE email='${req.body.email}'`
     db.get(sql, [], (err, row) => {
+        console.log(row);
         if(err) {
             console.log(err);
             return res.status(500).json({ message: 'Internal server error. Please try again later.' });
@@ -87,7 +90,8 @@ var login = (req, res) => {
             let hash = crypto.createHmac('sha512',salt)
                                             .update(req.body.password)
                                             .digest("base64");
-
+            console.log(hash);
+            console.log(row.password.split("$")[1]);
             if(hash==row.password.split('$')[1]) {
                 return res.status(200).json({ message: 'Correct Password' });
                 
@@ -148,7 +152,6 @@ var createDevice = (req, res) => {
                 console.log(err);
                 return res.status(500).json({ message: 'Internal server error. Please try again later.' });
             }
-            console.log(row);
         });
     });
 
@@ -158,7 +161,6 @@ var createDevice = (req, res) => {
 var getTopics = function () {
     var sql = ` SELECT * FROM TABLE fields`
     db.all(sql, [], (err, rows) => {
-        console.log(rows);
         return rows;
     });
 }
@@ -191,13 +193,11 @@ var getDeviceOverviews = (req, res) => {
 }
 
 var getLogs = (req, res) => {
-    console.log(req.body);
     var sql = ` SELECT devicelogs.device_id, devicelogs.field, devicelogs.message, devicelogs.time, devices.zone, devices.name
                 FROM devicelogs, devices
                 WHERE devicelogs.device_id LIKE '${req.body.device_id}' AND devices.device_id LIKE '${req.body.device_id}'
                 ORDER BY time ASC
                 LIMIT ${req.body.limit} OFFSET ${req.body.offset}`
-    console.log(sql);
     db.all(sql, [], (err, rows) => {
         if(err) {
             console.log(err);
@@ -248,7 +248,6 @@ var getSettings = (req, res) => {
 }
 
 var deleteDevice = (req, res) => {
-    console.log('del');
     var sql = ` DELETE FROM devices WHERE device_id = '${req.params.device_id}'`
     db.get(sql, [], (err, row) => {
         
