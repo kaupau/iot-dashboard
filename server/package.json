@@ -1,0 +1,24 @@
+{
+  "name": "iot-server",
+  "version": "1.0.0",
+  "description": "This is a server to process MQTT relayed data from IoT Sensors, store that data in an SQL database, and act as an API for the front end dashboard.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon main"
+  },
+  "keywords": [
+    "IoT",
+    "MQTT"
+  ],
+  "author": "Kaushik Kanna",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
