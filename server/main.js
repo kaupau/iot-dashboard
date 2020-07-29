@@ -38,7 +38,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, "..", "build")));
 var port = process.env.PORT || 4000;
-app.listen(port, '0.0.0.0', 511, () => console.log(`Example app listening at http://localhost:${port}`))
+app.listen( process.env.PORT || 4000, '0.0.0.0', 511, () => console.log(`Example app listening at http://localhost:${port}`))
 
 app.post('/api/register', (req, res) => {dbutils.register(req, res)});
 
