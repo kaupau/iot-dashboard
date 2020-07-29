@@ -29,7 +29,6 @@ export default function Login() {
             if (response.status === 200) {
                 setAuthTokens(response.data);
                 setLoggedIn(true);
-                setIsError(false);
             }
             else {
                 setLoggedIn(false);
@@ -41,13 +40,6 @@ export default function Login() {
             setIsError(true);
             setMessage("Sorry, there is a problem logging in on our end. We will fix it soon.");
         });
-    }
-    
-    function override() {
-        setAuthTokens("jackie");
-        setLoggedIn(true);
-        setIsError(false);
-        window.location.reload(false);
     }
 
     if(authTokens=="jackie") {    // check if correct authtoken
@@ -105,7 +97,6 @@ export default function Login() {
                     width={270}
                 />
                 <Button appearance="primary" marginTop={16} onClick={registerUser}>Sign in</Button>
-                <Button appearance="warning" marginTop={16} onClick={override}>Override Sign in</Button>
                 <Text>{message}</Text>
             </Pane>
         </div>

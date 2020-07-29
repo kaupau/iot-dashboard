@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pane, TextInput, Button, Menu, Text, Heading, Theme } from 'evergreen-ui';
+import { Pane, TextInput, Button, Menu, Text, Heading, Theme, toaster } from 'evergreen-ui';
 import { useAuth } from '../Context/auth';
 import axios from 'axios';
 import './login.css';
@@ -10,8 +10,6 @@ export default function Login() {
     const [userName, setUsername] = useState("");
     const [passWord, setPassword] = useState("");
     const [loggedIn, setLoggedIn] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [loginFailure, setLoginFailure] = useState(false);
     const { setAuthTokens } = useAuth();
     const { authTokens } = useAuth();
     
@@ -24,27 +22,19 @@ export default function Login() {
             if (response.status == 200) {
                 setAuthTokens("jackie");
                 setLoggedIn(true);
-                setIsError(false);
                 window.location.reload(false);
-            }
-            else if (response.status == 401 || response.status == 409) {
-                setLoggedIn(false);
-                loginFailure(true);
-                setMessage("Sorry, your username or password does not match.");
-            }
-            
+            }            
         }).catch(exception => {
-            setIsError(true);
-            console.log(exception);
-            setMessage("Sorry, there is a problem logging in on our end. We will fix it soon.");
+            if (exception.response.status == 401 || exception.response.status == 409) {
+                setLoggedIn(false);
+                toaster.danger("Sorry, your username or password does not match.");
+            }
+            else {
+                setLoggedIn(false);
+                console.log(exception);
+                toaster.danger("Sorry, there is a problem logging in on our end. We will fix it soon.");
+            }
         });
-    }
-    
-    function override() {
-        setAuthTokens("jackie");
-        setLoggedIn(true);
-        setIsError(false);
-        window.location.reload(false);
     }
 
     if(authTokens=="jackie") {    // check if correct authtoken
@@ -85,8 +75,7 @@ export default function Login() {
                     width={270}
                 />
                 <Button appearance="primary" marginTop={16} onClick={loginUser}>Sign in</Button>
-                <Button appearance="warning" marginTop={16} onClick={override}>Override Sign in</Button>
-                <Text>{message}</Text>
+                <Button appearance="warning" marginTop={16} is="a" href="/register">Register</Button>
             </Pane>
         </div>
     );

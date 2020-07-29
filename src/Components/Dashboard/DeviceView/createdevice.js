@@ -13,23 +13,29 @@ export default function CreateDevice() {
     const [description, setDescription] = useState("");
 
     function submitDeviceCreation() {
-        axios.post('/api/devices/createdevice', {
-            name: name,
-            zone: zone,
-            fields: fields,
-            description: description,
-        }).then(res => {
-            if(res.status != 201)
-                toaster.danger("Could not add device.", {id: 'forbidden-action'});
-            else {
-                setCreateViewShown(false);
-                setCreatedViewShown(true);
-                setDevice_Id(res.data.device_id);
-                toaster.success("Success!", {description: 'Your device has been added to the dashboard.'});
-            }
-        }).catch(err => {
-                toaster.danger("Could not connect to the server.", {id: 'forbidden-action', duration: 10, description: 'Try again at a later time. Server may be down.'});
-        });
+        if (name == "" || zone == "" || fields.length == 0 || description == "")
+        {
+            toaster.warning("Device could not be created — You did not fill out all the fields!");
+            return ;
+        } else {
+            axios.post('/api/devices/createdevice', {
+                name: name,
+                zone: zone,
+                fields: fields,
+                description: description,
+            }).then(res => {
+                if(res.status != 201)
+                    toaster.danger("Could not add device.", {id: 'forbidden-action'});
+                else {
+                    setCreateViewShown(false);
+                    setCreatedViewShown(true);
+                    setDevice_Id(res.data.device_id);
+                    toaster.success("Success!", {description: 'Your device has been added to the dashboard.'});
+                }
+            }).catch(err => {
+                    toaster.danger("Could not connect to the server.", {id: 'forbidden-action', duration: 10, description: 'Try again at a later time. Server may be down.'});
+            });
+        }
     }
 
     return (

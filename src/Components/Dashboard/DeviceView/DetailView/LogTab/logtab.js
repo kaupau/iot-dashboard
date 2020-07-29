@@ -50,7 +50,7 @@ export default class LogTab extends React.Component {
         if(this.state.logs.length>=this.state.maxItems)  {
             this.setState({ hasMoreItems: false});
             toaster.notify(
-                'Loaded all logs.'
+                'Loaded all logs.', { duration: 1 }
             )
         }
         else if(this.state.loading != true)  {

@@ -9,39 +9,39 @@ export default function EditSettingsTab(props) {
     const [description, setDescription] = useState(props.settings.description);
 
     function submit() {
-        axios.post(`http://localhost:4000/api/dashboard/${props.id}/settings`, {
-            name: "",
+        axios.post(`/api/devices/dashboard/settings/${props.id}`, {
+            device_id: props.device_id,
+            name: name,
+            zone: zone,
+            fields: fields,
+            description: description
         }).then(res => {
-            if(res != 201)
-                toaster.danger("Could not save changes.", {id: 'forbidden-action'});
-            else {
+            if(res.status == 201) {
                 props.save(false);
                 toaster.success("Success!", {duration: 3, description: 'Your changes have been saved.'});
 //                window.location.reload(false);
             }
         }).catch(err => {
-                toaster.danger("Could not connect to the server.", {id: 'forbidden-action', duration: 4, description: 'Try again at a later time. Server may be down.'});
+                if (err.response.status == 500)
+                    toaster.danger("Could not save changes.", {id: 'forbidden-action'});
+                else 
+                    toaster.danger("Could not connect to the server.", {id: 'forbidden-action', duration: 4, description: 'Try again at a later time. Server may be down.'});
         });
     }
 
     function deleteDevice() {
         axios.delete(`/api/devices/dashboard/settings/${props.id}/delete`).then(res => {
-            if(res != 204)
+            if(res.status != 204)
                 toaster.danger("Could not save changes.", {id: 'forbidden-action'});
             else {
                 props.save(false);
-                toaster.success("Success!", {duration: 3, description: 'Device has been deleted.'});
+                toaster.success("Success!", {duration: 3, description: 'Device has been deleted. Please reload page.'});
 //                window.location.reload(false);
             }
         }).catch(err => {
                 toaster.danger("Could not connect to the server.", {id: 'forbidden-action', duration: 4, description: 'Try again at a later time. Server may be down.'});
         });
     }
-
-    
-    useEffect(() => {
-        setFields(props.settings.fields);
-    })
 
     return (
         <React.Fragment>
@@ -72,8 +72,11 @@ export default function EditSettingsTab(props) {
                     width="100%"
                     inputProps={{ placeholder: 'Add fields...' }}
                     values={fields}
-                    onChange={values => setFields(values.target.value)}
+                    onChange={values => {
+                        setFields(values)
+                    }}
                 />
+
 
                 <Label
                     htmlFor="textarea-2"

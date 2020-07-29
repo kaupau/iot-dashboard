@@ -148,6 +148,7 @@ var createDevice = (req, res) => {
                 console.log(err);
                 return res.status(500).json({ message: 'Internal server error. Please try again later.' });
             }
+            console.log(row);
         });
     });
 
@@ -234,8 +235,13 @@ var getSettings = (req, res) => {
             return res.status(500).json({ message: 'Internal server error. Please try again later.' });
         }
         else {
-            console.log(row);
-            row.fields = [row.fields.split(',')];
+            try {
+                row.fields = row.fields.split(',');
+            }
+            catch (err) {
+
+            }
+            console.log("rows: "+ row);
             return res.status(200).json(row)
         }
     })
@@ -255,9 +261,29 @@ var deleteDevice = (req, res) => {
 }
 
 var setSettings = (req, res) => {
-    var sql = ``
+    var sql = ` UPDATE devices
+                SET name = '${req.body.name}', zone = '${req.body.zone}', description = '${req.body.description}'
+                WHERE device_id = '${req.params.device_id}'`
+    db.get(sql, [], (err, row) => {
+        if (err)
+            res.status(409).send("bad");
+    });
+    var sql = ` DELETE FROM fields WHERE device_id = '${req.params.device_id}'`
+    db.get(sql, [], (err, row) => {
+        if (err)
+            res.status(409).send("bad");
+    });
+    
+    req.body.fields.forEach(field => {
+        var sql = ` INSERT INTO fields (device_id, field)
+                    VALUES ('${req.params.device_id}', '${field}')`
+        db.get(sql, [], (err, row) => {
+            if (err)
+                res.status(409).send("bad");
+        });
+    });
 
-    req.params.device_id
+    res.status(201).send("updated successfully");
 }
 
 module.exports = { register, login, getUsers, generateInviteKey, createDevice, getTopics, updateLog, getDeviceOverviews, getLogs, getDevices, getSettings, setSettings, deleteDevice, countLogs };

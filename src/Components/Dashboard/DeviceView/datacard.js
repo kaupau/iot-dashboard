@@ -40,7 +40,7 @@ export default class DataCard extends React.Component {
                     <Pane flexDirection="column" textAlign="left">
                         <Heading size={700} marginBottom={majorScale(1)}> {this.state.overview.name} </Heading>
                         <Text size={500}> {this.state.overview.zone} </Text> <br/>
-                        <Text color="muted">Last Updated: Today, {this.state.overview.last_updated}</Text>
+                        <Text color="muted">Last Updated: {this.state.overview.last_updated}</Text>
                     </Pane>
                 </Pane>
                 <Pane>

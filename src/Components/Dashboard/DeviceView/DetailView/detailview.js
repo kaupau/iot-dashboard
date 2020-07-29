@@ -31,7 +31,7 @@ export default function DetailView(props) {
                 >
                 <Heading size={600}> {props.overview.name} </Heading>
                 <Paragraph size={400} color="muted"> {props.overview.zone} </Paragraph>
-                <Paragraph size={400} color="muted">Last Updated: Today, {props.overview.lastUpdate}</Paragraph>
+                <Paragraph size={400} color="muted">Last Updated: {props.overview.lastUpdate}</Paragraph>
                 </Pane>
             </Pane>
             <Pane elevation={0} backgroundColor="white" padding={16}>

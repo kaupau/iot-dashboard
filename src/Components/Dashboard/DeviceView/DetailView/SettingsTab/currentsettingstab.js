@@ -31,7 +31,7 @@ export default function CurrentSettingsTab(props) {
                     width="100%"
                     inputProps={{ placeholder: 'Add fields...' }}
                     values={props.settings.fields}
-                    disableds
+                    disabled
                 />
 
                 <Label
