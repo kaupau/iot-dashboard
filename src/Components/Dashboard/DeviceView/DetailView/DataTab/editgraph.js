@@ -6,7 +6,7 @@ export default function EditGraph(props) {
     const [ isShown, setShown ] = useState(false);
 
     function submitGraphChanges() {
-        axios.post(`localhost:4000/api/dashboard/${props.id}/${props.resource}/graph`, {
+        axios.post(`/api/dashboard/${props.id}/${props.resource}/graph`, {
             name: "",
         }).then(res => {
             if(res != 201)

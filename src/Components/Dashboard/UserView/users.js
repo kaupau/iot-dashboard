@@ -15,7 +15,7 @@ export default class UserView extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('http://localhost:4000/api/users').then(res => {
+        axios.get('/api/users').then(res => {
             this.setState({Users: res.data.users});
         });
     }
